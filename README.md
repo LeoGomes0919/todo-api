@@ -175,7 +175,26 @@ Para ambiente dockerizado, esse processo já é executado automaticamente na ini
 
 Isso criará:
 - Usuários de teste
-- API Keys associadas
+- API Keys associadas a esses usuários.
+```bash
+{
+  key: '8b4fae2b91c44b6d9d2e1b0d97e3a4d1',
+  user_id: '7c1cc1d7-34c2-4f0e-9c2f-3fdab0e2f241',
+  name: 'Aurora Labs',
+},
+{
+  key: 'e8c15e9917c64df3afeafbb56b32c987',
+  user_id: '4a97fb23-36c4-4642-84fa-cb11020b7ee8',
+  name: 'Vertex Cloud',
+},
+{
+  key: 'ab77efac9320467bb84c64af0e0e7951',
+  user_id: 'f5e95e71-d683-48ea-a3c8-296cdcb22cc1',
+  name: 'Quantum API',
+},
+```
+
+- Criará também 1 task de exemplo para cada usuário.
 
 ---
 

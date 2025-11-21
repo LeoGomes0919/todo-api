@@ -1,41 +1,17 @@
 // import mongoose from 'mongoose';
 // import { env } from '@/config/env';
 
+import mongoose from 'mongoose'
+import { env } from '@/config/env'
 import { ApiKeyModel } from '@/models/api-key.model'
-
-// async function main() {
-//   try {
-//     console.log('📦 Conectando ao MongoDB...');
-//     await mongoose.connect(env.mongodb.uri);
-//     console.log('✅ MongoDB conectado\n');
-
-//     await runSeeds();
-
-//     console.log('\n🎉 Processo finalizado!');
-//     process.exit(0);
-//   } catch (error) {
-//     console.error('❌ Erro ao executar seeds:', error);
-//     process.exit(1);
-//   }
-// }
-
-// main();
+import { TaskModel } from '@/models/task.model'
+import { UserModel } from '@/models/user.model'
 
 export const apiKeySeeds = [
   {
     key: '8b4fae2b91c44b6d9d2e1b0d97e3a4d1',
     user_id: '7c1cc1d7-34c2-4f0e-9c2f-3fdab0e2f241',
     name: 'Aurora Labs',
-  },
-  {
-    key: 'f2d91b686c7341bfa4e081cc9c223bc5',
-    user_id: 'b9de2f65-7b74-4238-8a50-212e84a9f13c',
-    name: 'Skytech Systems',
-  },
-  {
-    key: 'c41f77e9b6d54427b8b1b6a425d6ac3e',
-    user_id: 'd6a720c1-2df0-4863-9a03-b9906abceb12',
-    name: 'Nova Connect',
   },
   {
     key: 'e8c15e9917c64df3afeafbb56b32c987',
@@ -49,11 +25,63 @@ export const apiKeySeeds = [
   },
 ]
 
-export async function seedApiKeys() {
+async function seedApiKeys() {
   console.log('🌱 Seeding API Keys...')
 
   await ApiKeyModel.deleteMany({})
+  apiKeySeeds.forEach((apiKey) => {
+    delete (apiKey as any).name
+  })
 
   const inserted = await ApiKeyModel.insertMany(apiKeySeeds)
   console.log(`✅ Inseridas ${inserted.length} API Keys`)
 }
+
+async function seedUsers() {
+  console.log('🌱 Seeding Users...')
+
+  await UserModel.deleteMany({})
+
+  const users = apiKeySeeds.map((apiKey) => ({
+    user_id: apiKey.user_id,
+    name: apiKey.name,
+  }))
+
+  const inserted = await UserModel.insertMany(users)
+  console.log(`✅ Inseridos ${inserted.length} Users`)
+}
+
+async function seedTasks() {
+  console.log('🌱 Seeding Tasks...')
+
+  await TaskModel.deleteMany({})
+
+  const tasks = apiKeySeeds.map((apiKey, index) => ({
+    user_id: apiKey.user_id,
+    title: `Task ${index + 1} for ${apiKey.name}`,
+    description: `This is a sample task for ${apiKey.name}.`,
+  }))
+
+  const inserted = await TaskModel.insertMany(tasks)
+  console.log(`✅ Inseridas ${inserted.length} Tasks`)
+}
+
+async function runSeeds() {
+  await seedUsers()
+  await seedApiKeys()
+  await seedTasks()
+}
+
+;(async () => {
+  try {
+    await mongoose.connect(env.mongodb.uri)
+
+    await runSeeds()
+
+    console.log('\n🎉 Seeds finalizado!')
+    process.exit(0)
+  } catch (error) {
+    console.error('❌ Erro ao executar seeds:', error)
+    process.exit(1)
+  }
+})()

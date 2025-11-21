@@ -14,7 +14,8 @@
     "docker:dev:down": "docker compose -f docker-compose.dev.yml down -v",
     "docker:prod:up": "docker compose up --build",
     "docker:prod:down": "docker compose down -v",
-    "biome:format": "biome format src --write"
+    "biome:format": "biome format src --write",
+    "seed": "dotenvx run -- tsx src/shared/database/seed.ts"
   },
   "keywords": [],
   "author": "",
